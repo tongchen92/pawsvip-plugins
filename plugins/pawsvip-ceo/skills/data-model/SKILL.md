@@ -9,7 +9,7 @@ user-invocable: false
 ## Critical Rules — Read Before Every Query
 
 1. **Occupancy questions → `forecast_historical_occupancy`**. NEVER scan the `reservation` table for occupancy counts. The `forecast_historical_occupancy` table has pre-aggregated daily totals by service type (boarding, daycare, grooming) and location. It is fast and indexed.
-2. **No project ID lookup needed** — just execute SQL directly. Do not call list_projects or get_project_url.
+2. **Supabase project ID is `jkwizuoumbsoznlnsykw`** — use this directly. NEVER call list_projects, get_project_url, or any lookup. Just execute SQL.
 3. **Case-sensitive columns in `reservation`** — these columns use camelCase and MUST be double-quoted in SQL: `"petName"`, `"ownerId"`, `"reservationId"`. All other tables use snake_case.
 4. **No `locations` table** — use `CASE location_id WHEN 1 THEN 'Tukwila' WHEN 2 THEN 'Ballard' WHEN 3 THEN 'West Seattle' END`
 5. **Location filter shorthand** — when the user says "Tukwila" use `location_id = 1`, "Ballard" use `location_id = 2`, "West Seattle" use `location_id = 3`
