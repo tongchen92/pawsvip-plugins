@@ -1,17 +1,16 @@
 {
   "name": "pawsvip-plugins",
-  "version": "1.0.0",
-  "description": "PawsVIP internal plugins for Claude",
   "owner": {
     "name": "Tong Chen"
+  },
+  "metadata": {
+    "description": "PawsVIP internal plugins for Claude",
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "pawsvip-ceo",
-      "source": {
-        "source": "github",
-        "repo": "tongchen92/pawsvip-ceo"
-      },
+      "source": "./plugins/pawsvip-ceo",
       "description": "CEO assistant for PawsVIP pet hotel. Business intelligence across 3 locations.",
       "version": "1.0.0",
       "author": {

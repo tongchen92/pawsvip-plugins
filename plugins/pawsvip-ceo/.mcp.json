@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "qbo": {
+      "type": "http",
+      "url": "https://app.pawsvip.com/api/qbo",
+      "headers": {
+        "Authorization": "Bearer ${user_config.qbo_token}"
+      }
+    }
+  }
+}
