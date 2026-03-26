@@ -6,25 +6,21 @@ user-invocable: false
 
 # PawsVIP Data Model
 
-This skill contains the database schema, timezone rules, and tested query patterns for the PawsVIP Supabase database. Always reference this before writing SQL.
+## Critical Rules — Read Before Every Query
 
-## Query Safety Rules
+1. **Occupancy questions → `forecast_historical_occupancy`**. NEVER scan the `reservation` table for occupancy counts. The `forecast_historical_occupancy` table has pre-aggregated daily totals by service type (boarding, daycare, grooming) and location. It is fast and indexed.
+2. **No project ID lookup needed** — just execute SQL directly. Do not call list_projects or get_project_url.
+3. **Case-sensitive columns in `reservation`** — these columns use camelCase and MUST be double-quoted in SQL: `"petName"`, `"ownerId"`, `"reservationId"`. All other tables use snake_case.
+4. **No `locations` table** — use `CASE location_id WHEN 1 THEN 'Tukwila' WHEN 2 THEN 'Ballard' WHEN 3 THEN 'West Seattle' END`
+5. **Location filter shorthand** — when the user says "Tukwila" use `location_id = 1`, "Ballard" use `location_id = 2`, "West Seattle" use `location_id = 3`
+6. **Always include LIMIT** — default to `LIMIT 100` unless the query is an aggregation
+7. **Skip preamble** — go straight to writing and executing the SQL query. Do not explain what you're about to do. Just do it.
 
-1. **Always include LIMIT** — default to `LIMIT 100` unless the query is an aggregation
-2. **Use indexed columns in WHERE** — check the indexes listed below each table
-3. **Use the correct table name** — the reservation table is called `reservation` (not `reservations`)
-4. **No locations table exists** — use CASE statements for location names (see business-context skill)
-5. **Verify column names** — use the schemas below, not assumptions
+## Query Efficiency
 
-## Query Efficiency Rules
-
-1. **Use pre-aggregated tables first** — for occupancy data, always use `forecast_historical_occupancy` instead of scanning `reservation`. It has daily totals already computed.
-2. **Filter by indexed columns** — always put indexed columns in WHERE clauses. Check the indexes listed under each table.
-3. **Avoid full table scans** — never `SELECT * FROM reservation` without a date range or other indexed filter. The reservation table has hundreds of thousands of rows.
-4. **Use date ranges** — bound queries with date filters (e.g., `WHERE date >= CURRENT_DATE - INTERVAL '7 days'`) rather than scanning all history.
-5. **Select only needed columns** — avoid `SELECT *` when you only need a few fields.
-6. **Use FILTER for conditional aggregates** — `COUNT(*) FILTER (WHERE ...)` is faster than subqueries or CASE-based counting.
-7. **Prefer EXISTS over IN for subqueries** — `WHERE EXISTS (SELECT 1 FROM ...)` is more efficient than `WHERE id IN (SELECT id FROM ...)`.
+- **Use date ranges** — always bound with date filters, never scan all history
+- **Use FILTER for conditional aggregates** — `COUNT(*) FILTER (WHERE ...)` is faster than CASE
+- **Avoid full table scans** — the `reservation` table has hundreds of thousands of rows
 
 ## Timezone Rules
 
@@ -350,7 +346,39 @@ GROUP BY location_id
 ORDER BY location_id;
 ```
 
-### 4. Staff schedule for a given week
+### 4. Year-over-year monthly occupancy for a location
+```sql
+SELECT
+  EXTRACT(YEAR FROM date) AS year,
+  EXTRACT(MONTH FROM date) AS month,
+  ROUND(AVG(total_occupancy), 1) AS avg_daily_occupancy,
+  MAX(total_occupancy) AS peak_day,
+  SUM(total_occupancy) AS total_dog_days
+FROM forecast_historical_occupancy
+WHERE location_id = 1  -- 1=Tukwila, 2=Ballard, 3=West Seattle
+GROUP BY EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date)
+ORDER BY year, month;
+```
+
+### 5. Monthly occupancy trend across all locations
+```sql
+SELECT
+  EXTRACT(YEAR FROM date) AS year,
+  EXTRACT(MONTH FROM date) AS month,
+  CASE location_id
+    WHEN 1 THEN 'Tukwila'
+    WHEN 2 THEN 'Ballard'
+    WHEN 3 THEN 'West Seattle'
+  END AS location_name,
+  ROUND(AVG(total_occupancy), 1) AS avg_daily_occupancy,
+  ROUND(AVG(boarding), 1) AS avg_boarding,
+  ROUND(AVG(daycare), 1) AS avg_daycare
+FROM forecast_historical_occupancy
+GROUP BY EXTRACT(YEAR FROM date), EXTRACT(MONTH FROM date), location_id
+ORDER BY year, month, location_id;
+```
+
+### 6. Staff schedule for a given week
 ```sql
 SELECT
   ss.date,
@@ -373,7 +401,7 @@ ORDER BY ss.date, ss.location_id, ss.start_time
 LIMIT 200;
 ```
 
-### 5. Shift task completion rate by location and date
+### 7. Shift task completion rate by location and date
 ```sql
 SELECT
   CASE stt.location_id
@@ -394,7 +422,7 @@ ORDER BY stt.location_id, stt.shift_type
 LIMIT 50;
 ```
 
-### 6. Gallery items uploaded today by location
+### 8. Gallery items uploaded today by location
 ```sql
 SELECT
   CASE location_id
@@ -411,7 +439,7 @@ GROUP BY location_id
 ORDER BY location_id;
 ```
 
-### 7. Unresolved tag reports
+### 9. Unresolved tag reports
 ```sql
 SELECT
   id,
@@ -425,7 +453,7 @@ ORDER BY reported_at DESC
 LIMIT 50;
 ```
 
-### 8. Till / cash balance by location for date range
+### 10. Till / cash balance by location for date range
 ```sql
 SELECT
   counted_date,
@@ -445,7 +473,7 @@ ORDER BY counted_date DESC, location_id
 LIMIT 50;
 ```
 
-### 9. Active pet attention alerts
+### 11. Active pet attention alerts
 ```sql
 SELECT
   CASE location_id
@@ -463,7 +491,7 @@ ORDER BY location_id, pet_name
 LIMIT 50;
 ```
 
-### 10. New customers this week
+### 12. New customers this week
 ```sql
 SELECT
   COUNT(*) AS new_customers,
@@ -474,7 +502,7 @@ WHERE created_at >= date_trunc('week', CURRENT_DATE)
 LIMIT 1;
 ```
 
-### 11. Gallery reactions received this week
+### 13. Gallery reactions received this week
 ```sql
 SELECT
   gr.uploaded_by AS staff_email,
@@ -487,7 +515,7 @@ ORDER BY reactions_received DESC
 LIMIT 50;
 ```
 
-### 12. Leads by status and source
+### 14. Leads by status and source
 ```sql
 SELECT
   status,

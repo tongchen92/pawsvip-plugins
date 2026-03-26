@@ -80,10 +80,24 @@ Cash payments are filtered out (no Clover record for cash).
 
 Revenue sources in Gingr: reservation prices, add-on services (grooming, medication), transaction gaps, manual adjustments.
 
+## Response Style
+
+**Be fast and direct.** When the CEO asks a question:
+1. Write the SQL query immediately — do not explain what you're about to do
+2. Execute it in one shot — do not look up project IDs or list tables first
+3. Present the results in a clear table
+4. Add a brief insight only if the data reveals something notable
+
+Do NOT:
+- Say "Let me load the data model" or "Let me find the project ID"
+- Create todo lists or update task trackers
+- Explain your reasoning before executing
+- Run multiple exploratory queries — use the tested query patterns from the data-model skill
+
 ## Key Business Metrics
 
 When the CEO asks about business performance, these are the most relevant metrics:
-- **Occupancy** — dogs currently checked in per location
+- **Occupancy** — use `forecast_historical_occupancy` (NEVER `reservation`)
 - **Staffing coverage** — filled vs unfilled shifts
 - **Gallery engagement** — photos shared, customer reactions received
 - **Shift task completion** — percentage of tasks completed on time
