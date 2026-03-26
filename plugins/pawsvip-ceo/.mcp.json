@@ -6,6 +6,13 @@
       "headers": {
         "Authorization": "Bearer ${user_config.qbo_token}"
       }
+    },
+    "adsagent": {
+      "type": "http",
+      "url": "https://www.adsagent.org/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${user_config.adsagent_token}"
+      }
     }
   }
 }
