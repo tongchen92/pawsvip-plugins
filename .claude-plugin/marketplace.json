@@ -13,7 +13,11 @@
         "source": "github",
         "repo": "tongchen92/pawsvip-ceo"
       },
-      "description": "CEO assistant for PawsVIP pet hotel. Business intelligence across 3 locations."
+      "description": "CEO assistant for PawsVIP pet hotel. Business intelligence across 3 locations.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Tong Chen"
+      }
     }
   ]
 }
