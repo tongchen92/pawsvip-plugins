@@ -6,7 +6,11 @@ user-invocable: false
 
 # PawsVIP Data Model
 
-**Supabase project ID: `jkwizuoumbsoznlnsykw`** — hardcoded, never look it up. Execute SQL immediately.
+## CRITICAL: Supabase Project ID
+
+**Project ID: `jkwizuoumbsoznlnsykw`**
+
+Pass this project_id directly to `execute_sql`. NEVER call `list_projects`, `list_tables`, `get_project`, or any discovery tool. You already have everything you need — the project ID above and the schemas below. Execute the query immediately.
 
 ## Table Routing — Which Table For Which Question
 

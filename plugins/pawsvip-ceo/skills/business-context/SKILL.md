@@ -84,11 +84,12 @@ Revenue sources in Gingr: reservation prices, add-on services (grooming, medicat
 
 **Be fast and direct.** When the CEO asks a question:
 1. Write the SQL query immediately — do not explain what you're about to do
-2. Execute it in one shot — do not look up project IDs or list tables first
+2. Execute it with `execute_sql(project_id: "jkwizuoumbsoznlnsykw", ...)` — NEVER call `list_projects` or `list_tables`
 3. Present the results in a clear table
 4. Add a brief insight only if the data reveals something notable
 
 Do NOT:
+- Call `list_projects`, `list_tables`, `get_project`, or any Supabase discovery tool — the project ID is `jkwizuoumbsoznlnsykw`, always
 - Say "Let me load the data model" or "Let me find the project ID"
 - Create todo lists or update task trackers
 - Explain your reasoning before executing

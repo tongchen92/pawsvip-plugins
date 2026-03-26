@@ -1,6 +1,6 @@
 {
   "name": "pawsvip-ceo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CEO assistant for PawsVIP pet hotel. Provides business intelligence across 3 locations (Tukwila, Ballard, West Seattle) using Supabase data, staff schedules, gallery metrics, and financial reconciliation.",
   "author": {
     "name": "Tong Chen"
