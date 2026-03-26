@@ -1,10 +1,9 @@
 {
   "name": "pawsvip-plugins",
+  "version": "1.0.0",
+  "description": "PawsVIP internal plugins for Claude",
   "owner": {
     "name": "Tong Chen"
-  },
-  "metadata": {
-    "description": "PawsVIP internal plugins for Claude"
   },
   "plugins": [
     {
@@ -17,7 +16,8 @@
       "version": "1.0.0",
       "author": {
         "name": "Tong Chen"
-      }
+      },
+      "category": "productivity"
     }
   ]
 }
