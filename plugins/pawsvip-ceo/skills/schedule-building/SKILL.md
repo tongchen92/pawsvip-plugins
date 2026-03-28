@@ -6,7 +6,7 @@ user-invocable: false
 
 # Schedule Building Reference
 
-Context for agents building or modifying PawsVIP staff schedules. This is reference data — the calling agent makes all scheduling decisions.
+Context for agents building or modifying PawsVIP staff schedules.
 
 ## Data Model
 
@@ -22,103 +22,43 @@ Context for agents building or modifying PawsVIP staff schedules. This is refere
 | staff_id | integer | FK to pawsvip_staff. NULL = unassigned |
 | location_id | integer | 1=Tukwila, 2=Ballard, 3=West Seattle |
 | is_lead | boolean | Lead shift flag |
-| notes | text | Optional context (e.g. "airport bridge") |
+| notes | text | Optional (e.g. "airport bridge") |
 
-### Read-only context tables
+### Read-only tables
 
-**`pawsvip_staff`** — Staff roster
+**`pawsvip_staff`**: `staff_id` (int PK), `name` (text), `role` (text: staff/lead/manager/admin), `active` (bool)
 
-| Column | Type | Notes |
-|--------|------|-------|
-| staff_id | integer | PK |
-| name | text | Display name |
-| role | text | `'staff'`, `'lead'`, `'manager'`, `'admin'` |
-| active | boolean | Default true |
+**`forecast_predictions`**: `forecast_date` (date), `location_id` (int), `service_category` (text: boarding/daycare/grooming), `predicted_count` (numeric)
 
-**`forecast_predictions`** — Occupancy forecast
+**`availability_time_range`**: `staff_id` (int), `weekday` (smallint, 0=Mon..6=Sun), `is_available` (bool), `start_time` (time, null if unavailable), `end_time` (time, null if unavailable), `note` (text). The modern availability system — use this over `availability_weekly`.
 
-| Column | Type | Notes |
-|--------|------|-------|
-| forecast_date | date | Predicted date |
-| location_id | integer | 1, 2, or 3 |
-| service_category | text | `'boarding'`, `'daycare'`, `'grooming'` |
-| predicted_count | numeric | Forecasted count |
+**`availability_exceptions`**: `staff_id` (int), `local_date` (date), `note` (text). One-off absences — PTO, sick days, vacation. If a staff member has an exception for a date, they cannot work that day.
 
-**`airport_layover_tasks`** — Airport pickup/dropoff tasks
-
-| Column | Type | Notes |
-|--------|------|-------|
-| id | uuid | PK |
-| scheduled_time | timestamptz | When the task is scheduled |
-| status | text | Filter out `'cancelled'` |
-
-Airport tasks only affect Tukwila (location_id = 1).
+**`airport_layover_tasks`**: `id` (uuid), `scheduled_time` (timestamptz), `status` (text — filter out 'cancelled'). Airport tasks only affect Tukwila (location_id = 1).
 
 ## Shift Types
 
-| Type | Start Range | Standard Template |
-|------|-------------|------------------|
+| Type | Start Range | Template |
+|------|-------------|----------|
 | OPEN | 05:00-12:59 | 05:00-13:00 |
 | MID | 09:00-12:59 | 09:00-17:00 |
 | CLOSE | 13:00-20:59 | 13:00-21:00 |
 | OVERNIGHT | 21:00-04:59 | 21:00-05:00 |
 
-## Constraints
+## Hard Constraints
 
-These are hard constraints. Violations make a schedule invalid.
+Violations make a schedule invalid — these are non-negotiable.
 
 | Constraint | Value |
 |-----------|-------|
 | Minimum shift duration | 4 hours |
 | Max shifts per staff per week | 5 |
 | Max hours per staff per week | 42 |
-| Lead shifts require role | `'lead'` or `'manager'` |
+| Lead shifts require role | 'lead' or 'manager' |
 | Required daily coverage per location | Open (lead) + Close (lead) + Overnight |
-| Valid location IDs | 1, 2, 3 |
-| Week boundary | Monday through Sunday |
 
-## Staffing Guidelines
+## References (load on demand)
 
-These are soft guidelines. The calling agent should use these to make decisions.
-
-### Dogs-per-FTE Ratios
-
-FTE = total_staff_hours / 8
-
-| Location | Min | Target | Warning | Critical |
-|----------|-----|--------|---------|----------|
-| Tukwila | 9 | 9-14 | >16 | >20 |
-| Ballard | 6 | 6-12 | >13 | >16 |
-| West Seattle | 5 | 5-9 | >11 | >14 |
-
-### Location-Specific Patterns
-
-**Tukwila** (busiest, ~5 base shifts/day):
-- Add mid shift (09:00-17:00) when total_pets >= 70 on Mon-Thu
-- Airport bridge shift when 3+ tasks between 19:00-01:00 → 19:00-01:00; 1-2 tasks → 18:00-00:00
-- 2nd overnight when 6+ combined evening + early-morning airport tasks
-
-**Ballard** (~3 base shifts/day):
-- Weekends: skeleton crew only (05:00-13:00 lead + 09:00-21:00 lead)
-
-**West Seattle** (~3 base shifts/day):
-- Mon-Thu: Bree slot 05:00-14:30, Enrique slot 14:30-21:00
-
-### Slow Hours
-
-05:00-07:00 and 19:00-21:00 — max 2 concurrent staff is sufficient. Avoid scheduling 4+ staff in these windows.
-
-### Staff Target Hours
-
-~24 hours/week per staff member is the default target.
-
-## Staff Context File
-
-`${CLAUDE_PLUGIN_DATA}/staff-context.md` stores staff-specific scheduling knowledge that isn't in the database — preferences, constraints, temporary overrides, and team notes. Read this file before building any schedule. If it doesn't exist yet, copy the template from `${CLAUDE_PLUGIN_ROOT}/skills/schedule-building/staff-context.md` first. It has four sections:
-
-- **Permanent Preferences** — ongoing shift/location preferences (e.g. "prefers closing")
-- **Staff Constraints** — hard limits on hours, days, or shift types (e.g. "no overnights")
-- **Temporary Overrides** — time-bound exceptions with `[until YYYY-MM-DD]` tags
-- **Scheduling Notes** — soft context like pairing preferences or team dynamics
-
-When the user mentions staff-specific scheduling info, save it to the appropriate section in `${CLAUDE_PLUGIN_DATA}/staff-context.md`. Replace contradicting entries. Clean up expired overrides.
+- **SQL patterns**: `references/sql-patterns.md` — tested queries for all CRUD operations
+- **Staffing guidelines**: `references/staffing-guidelines.md` — dogs-per-FTE ratios, location-specific patterns, slow hours
+- **Staff context**: `${CLAUDE_PLUGIN_DATA}/staff-context.md` — staff preferences, constraints, temporary overrides (template at `staff-context.md` in this skill directory)
