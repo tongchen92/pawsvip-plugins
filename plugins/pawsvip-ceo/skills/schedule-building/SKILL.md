@@ -10,7 +10,7 @@ Context for agents building or modifying PawsVIP staff schedules. This is refere
 
 ## Data Model
 
-### `ai_draft_shifts` — Working draft (staging area)
+### `ai_draft_shifts` — The only writable table
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -24,32 +24,9 @@ Context for agents building or modifying PawsVIP staff schedules. This is refere
 | is_lead | boolean | Lead shift flag |
 | notes | text | Optional context (e.g. "airport bridge") |
 
-### `schedule_shifts` — Live schedule (visible to staff)
+### Read-only context tables
 
-| Column | Type | Notes |
-|--------|------|-------|
-| id | text | PK |
-| schedule_week_id | uuid | FK to schedule_weeks.id |
-| date | date | Shift date |
-| start_time | time | Local PST time |
-| end_time | time | Local PST time |
-| staff_id | integer | FK to pawsvip_staff. NULL = unfilled |
-| location_id | integer | 1=Tukwila, 2=Ballard, 3=West Seattle |
-| is_lead | boolean | Shift lead flag |
-| is_training | boolean | Training shift (default false) |
-| notes | text | Optional |
-
-### `schedule_weeks` — Week container
-
-| Column | Type | Notes |
-|--------|------|-------|
-| id | uuid | PK |
-| week_start | date | Monday (UNIQUE) |
-| status | text | `'draft'` or `'published'` |
-| published_at | timestamptz | NULL if draft |
-| location_notes | jsonb | Per-location notes, default `{}` |
-
-### `pawsvip_staff` — Staff roster
+**`pawsvip_staff`** — Staff roster
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -58,7 +35,7 @@ Context for agents building or modifying PawsVIP staff schedules. This is refere
 | role | text | `'staff'`, `'lead'`, `'manager'`, `'admin'` |
 | active | boolean | Default true |
 
-### `forecast_predictions` — Occupancy forecast
+**`forecast_predictions`** — Occupancy forecast
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -67,7 +44,7 @@ Context for agents building or modifying PawsVIP staff schedules. This is refere
 | service_category | text | `'boarding'`, `'daycare'`, `'grooming'` |
 | predicted_count | numeric | Forecasted count |
 
-### `airport_layover_tasks` — Airport pickup/dropoff tasks
+**`airport_layover_tasks`** — Airport pickup/dropoff tasks
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -135,10 +112,13 @@ FTE = total_staff_hours / 8
 
 ~24 hours/week per staff member is the default target.
 
-## Lifecycle
+## Staff Context File
 
-```
-ai_draft_shifts  →  (iterate until satisfied)  →  schedule_shifts (draft)  →  publish (manual, in-app only)
-```
+`skills/schedule-building/staff-context.md` stores staff-specific scheduling knowledge that isn't in the database — preferences, constraints, temporary overrides, and team notes. Read this file before building any schedule. It has four sections:
 
-The calling agent works in `ai_draft_shifts`. Promotion to `schedule_shifts` copies the draft. Publishing is always a manual action in the PawsVIP app — never automate it.
+- **Permanent Preferences** — ongoing shift/location preferences (e.g. "prefers closing")
+- **Staff Constraints** — hard limits on hours, days, or shift types (e.g. "no overnights")
+- **Temporary Overrides** — time-bound exceptions with `[until YYYY-MM-DD]` tags
+- **Scheduling Notes** — soft context like pairing preferences or team dynamics
+
+When the user mentions staff-specific scheduling info, save it to the appropriate section. Replace contradicting entries. Clean up expired overrides.
