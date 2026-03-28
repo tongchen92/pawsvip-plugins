@@ -16,9 +16,9 @@ Use Supabase project ID `jkwizuoumbsoznlnsykw`. Execute SQL immediately — no d
 
 ## What to load
 
-- **For SQL patterns**: read `${CLAUDE_PLUGIN_ROOT}/skills/schedule-building/references/sql-patterns.md`
-- **For staffing guidelines** (dogs-per-FTE, location patterns): read `${CLAUDE_PLUGIN_ROOT}/skills/schedule-building/references/staffing-guidelines.md`
-- **For staff preferences**: read `${CLAUDE_PLUGIN_DATA}/staff-context.md` (if it doesn't exist, copy template from `${CLAUDE_PLUGIN_ROOT}/skills/schedule-building/staff-context.md` first)
+- **For SQL patterns**: read `${CLAUDE_PLUGIN_ROOT}/skills/schedule-reference/references/sql-patterns.md`
+- **For staffing guidelines** (dogs-per-FTE, location patterns): read `${CLAUDE_PLUGIN_ROOT}/skills/schedule-reference/references/staffing-guidelines.md`
+- **For staff preferences**: read `${CLAUDE_PLUGIN_DATA}/staff-context.md` (if it doesn't exist, copy template from `${CLAUDE_PLUGIN_ROOT}/skills/schedule-reference/staff-context.md` first)
 
 Only load what you need. Simple CRUD (assign staff, delete a shift) doesn't need guidelines or staff context.
 

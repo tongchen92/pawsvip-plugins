@@ -1,5 +1,5 @@
 ---
-name: pawsvip-schedule-building
+name: pawsvip-schedule-reference
 description: Schedule data model, staffing rules, and constraints for PawsVIP weekly staff schedules. Use this skill whenever the conversation involves shifts, schedule drafts, staffing levels, schedule building, staff hours, coverage gaps, overtime, lead coverage, shift assignments, or any mention of ai_draft_shifts. Also triggers when discussing occupancy-based staffing decisions or staff preferences/constraints.
 user-invocable: false
 ---

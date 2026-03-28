@@ -14,7 +14,7 @@ CEO assistant for PawsVIP pet hotel. Provides business intelligence across 3 loc
 - **data-model** — PawsVIP database schema and tested query patterns
 - **business-context** — Location details, capacity, services, and team structure
 - **gingr-patterns** — Gingr API usage patterns and known pitfalls
-- **schedule-building** — Shift structure, staffing rules, draft/publish workflow, and SQL patterns
+- **schedule-reference** — Shift structure, staffing rules, and SQL patterns (auto-triggered, not user-invocable)
 
 ## Setup (Claude Cowork)
 
