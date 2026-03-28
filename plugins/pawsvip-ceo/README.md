@@ -5,13 +5,12 @@ CEO assistant for PawsVIP pet hotel. Provides business intelligence across 3 loc
 ## Skills
 
 **User-invocable** (type `/name` to run):
-- `/schedule-building` — Build, modify, and evaluate weekly staff schedules
+- `/schedule-building` — Build, modify, and evaluate weekly staff schedules (includes data model, SQL patterns, and staffing rules)
 - `/morning-briefing` — Daily snapshot of occupancy, staffing, tasks, and alerts
 - `/weekly-review` — Week-over-week performance analysis across all locations
 - `/investigate` — Deep dive investigation on any business topic
 
 **Auto-triggered** (loaded automatically when relevant):
-- **schedule-reference** — Shift data model, staffing rules, and SQL patterns
 - **data-model** — PawsVIP database schema and tested query patterns
 - **business-context** — Location details, capacity, services, and team structure
 - **gingr-patterns** — Gingr API usage patterns and known pitfalls
