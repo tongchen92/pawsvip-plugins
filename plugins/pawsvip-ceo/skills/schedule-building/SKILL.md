@@ -1,6 +1,6 @@
 ---
 name: pawsvip-schedule-building
-description: Schedule data model, staffing rules, and constraints for PawsVIP weekly staff schedules. Triggers on any question about shifts, schedule drafts, staffing levels, or schedule building.
+description: Schedule data model, staffing rules, and constraints for PawsVIP weekly staff schedules. Use this skill whenever the conversation involves shifts, schedule drafts, staffing levels, schedule building, staff hours, coverage gaps, overtime, lead coverage, shift assignments, or any mention of ai_draft_shifts. Also triggers when discussing occupancy-based staffing decisions or staff preferences/constraints.
 user-invocable: false
 ---
 
@@ -114,11 +114,11 @@ FTE = total_staff_hours / 8
 
 ## Staff Context File
 
-`skills/schedule-building/staff-context.md` stores staff-specific scheduling knowledge that isn't in the database — preferences, constraints, temporary overrides, and team notes. Read this file before building any schedule. It has four sections:
+`${CLAUDE_PLUGIN_DATA}/staff-context.md` stores staff-specific scheduling knowledge that isn't in the database — preferences, constraints, temporary overrides, and team notes. Read this file before building any schedule. If it doesn't exist yet, copy the template from `${CLAUDE_PLUGIN_ROOT}/skills/schedule-building/staff-context.md` first. It has four sections:
 
 - **Permanent Preferences** — ongoing shift/location preferences (e.g. "prefers closing")
 - **Staff Constraints** — hard limits on hours, days, or shift types (e.g. "no overnights")
 - **Temporary Overrides** — time-bound exceptions with `[until YYYY-MM-DD]` tags
 - **Scheduling Notes** — soft context like pairing preferences or team dynamics
 
-When the user mentions staff-specific scheduling info, save it to the appropriate section. Replace contradicting entries. Clean up expired overrides.
+When the user mentions staff-specific scheduling info, save it to the appropriate section in `${CLAUDE_PLUGIN_DATA}/staff-context.md`. Replace contradicting entries. Clean up expired overrides.

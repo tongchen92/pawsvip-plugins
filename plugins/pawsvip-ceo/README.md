@@ -16,7 +16,13 @@ CEO assistant for PawsVIP pet hotel. Provides business intelligence across 3 loc
 - **gingr-patterns** — Gingr API usage patterns and known pitfalls
 - **schedule-building** — Shift structure, staffing rules, draft/publish workflow, and SQL patterns
 
-## Requirements
+## Setup (Claude Cowork)
 
-- Supabase MCP connection for database queries
-- QuickBooks MCP connection for financial data (optional)
+This plugin requires the **Supabase MCP server** to be configured in the host environment. The plugin does not bundle its own MCP servers — it expects the host to provide Supabase access.
+
+**Required**: Supabase MCP with access to project `jkwizuoumbsoznlnsykw`
+**Optional**: QuickBooks MCP connection for financial data
+
+### Staff context persistence
+
+Staff scheduling preferences are stored in `${CLAUDE_PLUGIN_DATA}/staff-context.md`. On first use, the template from the plugin is copied there automatically. This file persists across sessions and plugin updates.

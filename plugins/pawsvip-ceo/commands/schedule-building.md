@@ -14,9 +14,9 @@ You are a data layer — execute the requested operations and return results. Do
 
 ## Staff Context
 
-Read `skills/schedule-building/staff-context.md` before any schedule-building session. This file contains staff preferences, constraints, and notes that affect scheduling decisions. Return its contents when the caller requests context.
+Before any schedule-building session, check if `${CLAUDE_PLUGIN_DATA}/staff-context.md` exists. If not, copy the template from `${CLAUDE_PLUGIN_ROOT}/skills/schedule-building/staff-context.md` to `${CLAUDE_PLUGIN_DATA}/staff-context.md`. Then read `${CLAUDE_PLUGIN_DATA}/staff-context.md` — this file contains staff preferences, constraints, and notes that affect scheduling decisions. Return its contents when the caller requests context.
 
-When the user shares new staff information that affects scheduling (preferences, hour limits, availability, temporary overrides), update `staff-context.md`:
+When the user shares new staff information that affects scheduling (preferences, hour limits, availability, temporary overrides), update `${CLAUDE_PLUGIN_DATA}/staff-context.md`:
 
 - **Permanent preferences** → add under `## Permanent Preferences`
 - **Hard limits** (max hours, no overnights, day restrictions) → add under `## Staff Constraints`
@@ -30,7 +30,7 @@ When updating, preserve existing entries. If new info contradicts an existing en
 ### Reads
 
 **Get staff context**:
-Read and return the contents of `skills/schedule-building/staff-context.md`.
+Read and return the contents of `${CLAUDE_PLUGIN_DATA}/staff-context.md`. If it doesn't exist, copy from `${CLAUDE_PLUGIN_ROOT}/skills/schedule-building/staff-context.md` first.
 
 
 **Get occupancy forecast** for a date range:
