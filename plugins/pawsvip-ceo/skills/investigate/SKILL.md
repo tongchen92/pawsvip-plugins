@@ -1,5 +1,8 @@
 ---
-description: Deep dive investigation on any business topic using database queries
+name: investigate
+description: "Deep dive investigation on any business topic using database queries. Use when the user wants to research, analyze, or explore PawsVIP business data."
+user-invocable: true
+argument-hint: "[topic to investigate]"
 ---
 
 # Investigate

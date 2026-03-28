@@ -1,5 +1,7 @@
 ---
-description: Daily snapshot of occupancy, staffing, tasks, and alerts across all locations
+name: morning-briefing
+description: "Daily snapshot of occupancy, staffing, tasks, and alerts across all locations. Use for morning updates or daily status checks."
+user-invocable: true
 ---
 
 # Morning Briefing

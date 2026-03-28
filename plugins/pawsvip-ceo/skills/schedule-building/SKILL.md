@@ -1,5 +1,8 @@
 ---
-description: Atomic schedule operations — read context and CRUD on ai_draft_shifts only
+name: schedule-building
+description: "Atomic schedule operations: read context and CRUD on ai_draft_shifts only. Use when building, modifying, or reviewing weekly staff schedules."
+user-invocable: true
+argument-hint: "[operation or question about the schedule]"
 ---
 
 # Schedule Building
@@ -31,7 +34,7 @@ Before building or modifying a schedule, always check staff availability for the
 
 **Critical — weekday conversion**: The `weekday` column in `availability_time_range` uses 0=Mon, 1=Tue, ..., 6=Sun. This is NOT PostgreSQL's `EXTRACT(DOW)` convention (which uses 0=Sun). To convert a date to the correct weekday: `(EXTRACT(ISODOW FROM date) - 1)::int`. See sql-patterns.md for the "Available staff for a specific date" query that handles this correctly.
 
-**Overnight shifts**: Use the shift's START date for availability lookup. A 21:00–05:00 shift on Monday checks Monday's availability, even though it ends Tuesday.
+**Overnight shifts**: Use the shift's START date for availability lookup. A 21:00-05:00 shift on Monday checks Monday's availability, even though it ends Tuesday.
 
 ## Staff context updates
 

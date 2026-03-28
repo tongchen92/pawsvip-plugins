@@ -1,5 +1,7 @@
 ---
-description: Week-over-week performance analysis across all locations
+name: weekly-review
+description: "Week-over-week performance analysis across all locations. Use for weekly reviews, performance comparisons, or trend analysis."
+user-invocable: true
 ---
 
 # Weekly Review

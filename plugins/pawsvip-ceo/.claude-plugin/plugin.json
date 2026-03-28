@@ -5,7 +5,5 @@
   "author": {
     "name": "Tong Chen"
   },
-  "commands": "./commands/",
-  "skills": "./skills/",
-  "mcpServers": "./.mcp.json"
+  "skills": "./skills/"
 }
