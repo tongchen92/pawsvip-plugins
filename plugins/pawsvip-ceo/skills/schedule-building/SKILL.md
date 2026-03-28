@@ -20,19 +20,23 @@ Context for agents building or modifying PawsVIP staff schedules.
 | start_time | time | Local PST time |
 | end_time | time | Local PST time |
 | staff_id | integer | FK to pawsvip_staff. NULL = unassigned |
-| location_id | integer | 1=Tukwila, 2=Ballard, 3=West Seattle |
+| location_id | integer | **1=Tukwila/SeaTac, 2=Ballard, 3=West Seattle** (do NOT swap 2 and 3) |
 | is_lead | boolean | Lead shift flag |
 | notes | text | Optional (e.g. "airport bridge") |
 
 ### Read-only tables
 
-**`pawsvip_staff`**: `staff_id` (int PK), `name` (text), `role` (text: staff/lead/manager/admin), `active` (bool)
+**`pawsvip_staff`**: `staff_id` (int PK), `name` (text — single column, NOT first+last), `role` (text: staff/lead/manager/admin), `lead` (bool — lead flag, separate from role), `active` (bool), `target_hours` (int, nullable — per-staff weekly target; defaults: manager=40, lead=36, staff=32), `allow_location_ids` (int[], nullable — if set, staff can ONLY work these locations), `schedule_context` (text, nullable — free-text scheduling notes from manager), `recurring_need_off` (int[] — weekdays they MUST have off, 0=Mon..6=Sun), `recurring_preferred_off` (int[] — weekdays they PREFER off)
 
 **`forecast_predictions`**: `forecast_date` (date), `location_id` (int), `service_category` (text: boarding/daycare/grooming), `predicted_count` (numeric)
 
-**`availability_time_range`**: `staff_id` (int), `weekday` (smallint, 0=Mon..6=Sun), `is_available` (bool), `start_time` (time, null if unavailable), `end_time` (time, null if unavailable), `note` (text). The modern availability system — use this over `availability_weekly`.
+**`availability_time_range`**: `staff_id` (int), `weekday` (smallint, 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun), `is_available` (bool), `start_time` (time, null if unavailable), `end_time` (time, null if unavailable), `note` (text). **Warning**: PostgreSQL's `EXTRACT(DOW FROM date)` uses a different convention (0=Sun). Always convert with `(EXTRACT(ISODOW FROM date) - 1)::int` to match this table's 0=Mon convention. When `end_time < start_time`, the window wraps past midnight (e.g., 21:00–05:00).
 
 **`availability_exceptions`**: `staff_id` (int), `local_date` (date), `note` (text). One-off absences — PTO, sick days, vacation. If a staff member has an exception for a date, they cannot work that day.
+
+**`schedule_weeks`**: `id` (uuid PK), `week_start` (date), `location_notes` (jsonb). Schedule weeks — find the most recent week with shifts as the baseline for copy-forward.
+
+**`schedule_shifts`**: `id` (text PK), `schedule_week_id` (uuid FK → schedule_weeks), `date` (date), `start_time` (time), `end_time` (time), `staff_id` (int), `location_id` (int), `is_lead` (bool), `is_training` (bool), `notes` (text). Finalized shifts — use as baseline for copy-forward scheduling. Find the most recent week with shifts as the baseline.
 
 **`airport_layover_tasks`**: `id` (uuid), `scheduled_time` (timestamptz), `status` (text — filter out 'cancelled'). Airport tasks only affect Tukwila (location_id = 1).
 

@@ -41,7 +41,7 @@ Stored in `pawsvip_staff.role` column.
 
 The schedule runs Monday through Sunday.
 
-- `schedule_weeks` — one row per week. `status` is `'draft'` or `'published'`. Only published weeks are visible to staff.
+- `schedule_weeks` — one row per week (Mon–Sun). Find the most recent week with shifts for the current schedule baseline.
 - `schedule_shifts` — individual shift assignments. Each row is one person's shift on one day.
   - `staff_id IS NULL` means the shift is **unfilled** (needs coverage).
   - `is_lead = true` means this person is the shift lead.

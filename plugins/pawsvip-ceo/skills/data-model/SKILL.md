@@ -70,7 +70,7 @@ For who's working, shift coverage, unfilled shifts, staff hours.
 | Table | Use for |
 |-------|---------|
 | `pawsvip_staff` | Staff roster — names, emails, roles, active status |
-| `schedule_weeks` | Week containers. `status` = 'draft' or 'published'. Mon→Sun |
+| `schedule_weeks` | Week containers. Mon→Sun. Find most recent week with shifts for baseline |
 | `schedule_shifts` | Individual shift assignments. `staff_id IS NULL` = unfilled |
 
 **Joins:** `schedule_shifts.schedule_week_id` → `schedule_weeks.id`, `schedule_shifts.staff_id` → `pawsvip_staff.staff_id`
@@ -207,7 +207,7 @@ Synced from Gingr. Use ONLY for individual pet/owner lookups, NOT for occupancy 
 
 ### `schedule_weeks` / `schedule_shifts`
 
-Schedule runs Mon-Sun. `schedule_weeks.status` = 'draft' or 'published'. `schedule_shifts.staff_id IS NULL` = unfilled shift. `schedule_shifts.location_id` = 1/2/3.
+Schedule runs Mon-Sun. `schedule_shifts.staff_id IS NULL` = unfilled shift. `schedule_shifts.location_id` = 1 (Tukwila), 2 (Ballard), 3 (West Seattle).
 
 ### `pet_gallery`
 
@@ -391,7 +391,7 @@ SELECT ss.date, ss.start_time, ss.end_time, ps.name, ss.is_lead,
 FROM schedule_shifts ss
 JOIN schedule_weeks sw ON ss.schedule_week_id = sw.id
 LEFT JOIN pawsvip_staff ps ON ss.staff_id = ps.staff_id
-WHERE sw.week_start = date_trunc('week', CURRENT_DATE)::date AND sw.status = 'published'
+WHERE sw.week_start = date_trunc('week', CURRENT_DATE)::date
 ORDER BY ss.date, ss.location_id, ss.start_time LIMIT 200;
 ```
 
