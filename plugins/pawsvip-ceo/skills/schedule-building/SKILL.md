@@ -38,7 +38,6 @@ Use Supabase project ID `jkwizuoumbsoznlnsykw`. Execute SQL immediately — no d
 - `locations`: `id` (int PK), `name` (text), `active` (bool). Source of truth for location IDs.
 - `forecast_predictions`: `forecast_date` (date), `location_id` (int), `service_category` (text: boarding/daycare/grooming), `predicted_count` (numeric)
 - `availability_time_range`: `staff_id` (int), `weekday` (smallint, 0=Mon..6=Sun), `is_available` (bool), `start_time` (time), `end_time` (time), `note` (text). When `end_time < start_time`, window wraps past midnight.
-- `availability_weekly`: `staff_id` (int), `weekday` (smallint), `kind` (text: OPEN/CLOSE/OVERNIGHT), `status` (text: YES/NO). Shift-type preferences per weekday.
 - `availability_exceptions`: `staff_id` (int), `local_date` (date), `note` (text). One-off absences — PTO, sick, vacation. Staff CANNOT work on exception dates.
 - `schedule_weeks`: `id` (uuid PK), `week_start` (date), `location_notes` (jsonb).
 - `schedule_shifts`: `id` (text PK), `schedule_week_id` (uuid FK), `date` (date), `start_time` (time), `end_time` (time), `staff_id` (int), `location_id` (int), `is_lead` (bool), `is_training` (bool), `notes` (text). Finalized shifts — use as baseline for copy-forward.
@@ -107,7 +106,6 @@ Most weeks are ~90% similar to the previous week. Start from the most recent fin
    - Does the new date have an exception? (check `availability_exceptions`)
    - Does the shift time fall outside their available window?
    - Would total hours exceed 40?
-   - Does `availability_weekly` show `status = 'NO'` for this shift kind on this weekday?
 4. **Remove conflicting shifts** — don't force them, just remove.
 5. **Track gaps** — record which slots (day x location x shift_type x role) are now unfilled.
 
@@ -127,7 +125,6 @@ Most weeks are ~90% similar to the previous week. Start from the most recent fin
 4. **Within each day**, assign location and shift type:
    - **Lead slots first**: Each location needs exactly 1 lead AM and 1 lead PM. Assign location-locked leads first, then flexible leads.
    - **Staff slots next**: Assign location-locked staff first, then flexible staff.
-   - **Honor shift preferences**: Use `availability_weekly` (kind + status) to prefer matching shifts. If someone has `OPEN=YES, CLOSE=NO`, prefer AM over PM.
    - **Never exceed**: 1 lead per shift per location, 40 hours per person.
 
 ### Phase 4: Validate Before Inserting
@@ -168,8 +165,7 @@ For single shift CRUD (assign, swap, delete, add), execute immediately using pat
 
 1. Query `availability_time_range` for recurring weekly availability
 2. Query `availability_exceptions` for the date range
-3. Check `availability_weekly` for shift-type preferences
-4. **Overnight shifts**: Use the shift's START date for availability lookup. A 21:00-05:00 shift on Monday checks Monday's availability.
+3. **Overnight shifts**: Use the shift's START date for availability lookup. A 21:00-05:00 shift on Monday checks Monday's availability.
 
 ## Staff Context Updates
 
