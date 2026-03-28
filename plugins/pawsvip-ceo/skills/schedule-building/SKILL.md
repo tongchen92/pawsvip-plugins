@@ -49,15 +49,6 @@ Use Supabase project ID `jkwizuoumbsoznlnsykw`. Execute SQL immediately — no d
 
 **`airport_layover_tasks`**: `id` (uuid), `scheduled_time` (timestamptz), `status` (text — filter out 'cancelled'). Airport tasks only affect Tukwila (location_id = 1).
 
-## Shift Types
-
-| Type | Start Range | Template |
-|------|-------------|----------|
-| OPEN | 05:00-12:59 | 05:00-13:00 |
-| MID | 09:00-12:59 | 09:00-17:00 |
-| CLOSE | 13:00-20:59 | 13:00-21:00 |
-| OVERNIGHT | 21:00-04:59 | 21:00-05:00 |
-
 ## Hard Constraints
 
 Violations make a schedule invalid — these are non-negotiable.

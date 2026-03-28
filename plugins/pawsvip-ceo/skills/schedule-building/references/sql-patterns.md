@@ -151,6 +151,30 @@ WHERE scheduled_time >= '<START>T00:00:00'
 ORDER BY scheduled_time;
 ```
 
+**Airport tasks aggregated by day and shift window** (for scheduling decisions):
+```sql
+-- Counts airport tasks per day, split into shift windows
+-- Business day runs 5:00 AM to 4:59 AM next day
+-- Tasks at or before 5:00 AM count toward the previous day
+SELECT
+  CASE
+    WHEN EXTRACT(HOUR FROM scheduled_time) * 60 + EXTRACT(MINUTE FROM scheduled_time) <= 300
+    THEN (scheduled_time - INTERVAL '1 day')::date
+    ELSE scheduled_time::date
+  END AS business_date,
+  COUNT(*) FILTER (WHERE EXTRACT(HOUR FROM scheduled_time) >= 5 AND EXTRACT(HOUR FROM scheduled_time) < 13) AS opening_tasks,
+  COUNT(*) FILTER (WHERE EXTRACT(HOUR FROM scheduled_time) >= 13 AND EXTRACT(HOUR FROM scheduled_time) < 21) AS closing_tasks,
+  COUNT(*) FILTER (WHERE EXTRACT(HOUR FROM scheduled_time) >= 21 OR EXTRACT(HOUR FROM scheduled_time) * 60 + EXTRACT(MINUTE FROM scheduled_time) <= 300) AS overnight_tasks,
+  COUNT(*) AS total_tasks
+FROM airport_layover_tasks
+WHERE scheduled_time >= '<WEEK_START>T05:00:00'
+  AND scheduled_time < '<WEEK_END_PLUS_1>T05:00:00'
+  AND status != 'cancelled'
+GROUP BY business_date
+ORDER BY business_date;
+```
+Airport tasks only affect Tukwila (location_id = 1). Use overnight_tasks to decide if extra overnight shifts or airport bridge shifts are needed. Staffing guidelines: 3+ tasks in 19:00-01:00 window warrants a 19:00-01:00 shift; 6+ combined evening + early morning tasks warrants a 2nd overnight.
+
 ## Writes
 
 **Create shift(s)**:
