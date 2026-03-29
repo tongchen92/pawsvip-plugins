@@ -1,27 +1,19 @@
 # PawsVIP CEO Plugin
 
-CEO assistant for PawsVIP pet hotel. Provides business intelligence across 3 locations (Tukwila, Ballard, West Seattle) using Supabase data, staff schedules, gallery metrics, and financial reconciliation.
+CEO assistant for PawsVIP pet hotel. Query any business data instantly across 3 locations (Tukwila, Ballard, West Seattle) via Supabase. Build and manage weekly staff schedules.
 
 ## Skills
 
-**User-invocable** (type `/name` to run):
-- `/schedule-building` — Build, modify, and evaluate weekly staff schedules (includes data model, SQL patterns, and staffing rules)
-- `/morning-briefing` — Daily snapshot of occupancy, staffing, tasks, and alerts
-- `/weekly-review` — Week-over-week performance analysis across all locations
-- `/investigate` — Deep dive investigation on any business topic
+**User-invocable:**
+- `/schedule-building` — Build, modify, and evaluate weekly staff schedules
 
-**Auto-triggered** (loaded automatically when relevant):
-- **data-model** — PawsVIP database schema and tested query patterns
-- **business-context** — Location details, capacity, services, and team structure
-- **gingr-patterns** — Gingr API usage patterns and known pitfalls
+**Auto-triggered:**
+- **data-model** — Database schema, business context, Gingr API patterns, and tested SQL queries. Loaded automatically on any business question — the agent can answer occupancy, revenue, staffing, gallery, leads, and more without a dedicated skill for each.
 
-## Setup (Claude Cowork)
+## How it works
 
-This plugin requires the **Supabase MCP server** to be configured in the host environment. The plugin does not bundle its own MCP servers — it expects the host to provide Supabase access.
+The plugin is intentionally minimal: one complex workflow skill (schedule-building) and one comprehensive data layer (data-model). The data-model skill gives the agent everything it needs — table schemas, disambiguation rules, tested query templates, and business context — so it can answer any ad-hoc question directly via `execute_sql` without needing separate skills for morning briefings, weekly reviews, or investigations.
 
-**Required**: Supabase MCP with access to project `jkwizuoumbsoznlnsykw`
-**Optional**: QuickBooks MCP connection for financial data
+## Setup
 
-### Staff context persistence
-
-Staff scheduling preferences are stored in `${CLAUDE_PLUGIN_DATA}/staff-context.md`. On first use, the template from the plugin is copied there automatically. This file persists across sessions and plugin updates.
+Requires **Supabase MCP** with access to project `jkwizuoumbsoznlnsykw`.
