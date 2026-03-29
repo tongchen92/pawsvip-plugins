@@ -10,11 +10,7 @@
   "plugins": [
     {
       "name": "pawsvip-ceo",
-      "source": {
-        "source": "github",
-        "repo": "tongchen92/pawsvip-plugins",
-        "path": "."
-      },
+      "source": ".",
       "description": "CEO assistant for PawsVIP pet hotel. Business intelligence across 3 locations.",
       "version": "1.1.0",
       "author": {
