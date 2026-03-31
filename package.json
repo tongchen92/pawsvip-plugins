@@ -1,0 +1,17 @@
+{
+  "name": "pawsvip-plugins",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run test/skill-validation.test.ts",
+    "test:integration": "vitest run test/payroll-integration.test.ts",
+    "test:evals": "EVALS=1 vitest run test/skill-eval.test.ts",
+    "test:all": "vitest run"
+  },
+  "devDependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "@supabase/supabase-js": "^2.49.4",
+    "vitest": "^2.1.9"
+  }
+}
