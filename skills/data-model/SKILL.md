@@ -1,5 +1,5 @@
 ---
-name: pawsvip-data-model
+name: data-model
 description: PawsVIP database schema, business context, and tested SQL patterns. Auto-triggers on any question about PawsVIP — occupancy, staffing, gallery, leads, tills, revenue, payments, reservations, locations, roles, or business operations. Always use this skill before writing SQL or answering business questions.
 user-invocable: false
 ---

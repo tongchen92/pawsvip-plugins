@@ -1,5 +1,5 @@
 ---
-name: pawsvip-payroll-data
+name: payroll-data
 description: Pull payroll data for a pay period — grooming tips by individual groomer plus location totals from Gingr, and credit card tips from Clover. Use this skill whenever asking about tips, groomer pay, payroll, tip totals, who earned what, or any two-week pay period breakdown.
 user-invocable: true
 ---
